@@ -2,6 +2,7 @@ pub mod r#async;
 mod from_request;
 pub mod http;
 mod read_chunks;
+pub mod sea_orm;
 pub mod validate;
 
 pub use from_request::{FromRequest, IntoPayload};
