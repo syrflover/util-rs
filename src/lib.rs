@@ -1,7 +1,10 @@
 pub mod r#async;
+mod from_request;
 pub mod http;
 mod read_chunks;
+pub mod validate;
 
+pub use from_request::{FromRequest, IntoPayload};
 pub use read_chunks::ReadChunks;
 
 #[macro_export]

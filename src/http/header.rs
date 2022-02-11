@@ -6,10 +6,8 @@ pub trait SetHeaders {
 
 impl SetHeaders for ResponseBuilder {
     fn headers(self, headers: impl Iterator<Item = (HeaderName, HeaderValue)>) -> Self {
-        let a = headers.fold(self, |res, (key, value)| res.header(key, value));
+        headers.fold(self, |res, (key, value)| res.header(key, value))
 
-        println!("{:?}", a);
-
-        a
+        // println!("{:?}", a);
     }
 }
