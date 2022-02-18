@@ -93,6 +93,24 @@ impl<'a> FromIterator<(&'a str, &'a str)> for Cookie {
     }
 }
 
+impl<'a> FromIterator<(&'a str, String)> for Cookie {
+    fn from_iter<T: IntoIterator<Item = (&'a str, String)>>(iter: T) -> Self {
+        Self::from_iter(
+            iter.into_iter()
+                .map(|(key, value)| (key.to_string(), value)),
+        )
+    }
+}
+
+impl<'a> FromIterator<(String, &'a str)> for Cookie {
+    fn from_iter<T: IntoIterator<Item = (String, &'a str)>>(iter: T) -> Self {
+        Self::from_iter(
+            iter.into_iter()
+                .map(|(key, value)| (key, value.to_string())),
+        )
+    }
+}
+
 impl From<Cookie> for (HeaderName, HeaderValue) {
     fn from(cookie: Cookie) -> Self {
         (
