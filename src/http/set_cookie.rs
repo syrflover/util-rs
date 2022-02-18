@@ -127,6 +127,10 @@ impl SetCookie {
         self.inner.get(key).map(|(v, _)| v.as_str())
     }
 
+    pub fn take(&mut self, key: &str) -> Option<String> {
+        self.inner.remove(key).map(|(x, _)| x)
+    }
+
     pub fn set(
         mut self,
         key: impl Into<String>,
