@@ -1,6 +1,9 @@
 use std::{collections::HashMap, fmt::Display};
 
-use http::{header, HeaderMap, Request};
+use http::{
+    header::{self, HeaderName, HeaderValue},
+    HeaderMap, Request,
+};
 use itertools::Itertools;
 
 #[derive(Debug, Default)]
@@ -86,6 +89,15 @@ impl<'a> FromIterator<(&'a str, &'a str)> for Cookie {
         Self::from_iter(
             iter.into_iter()
                 .map(|(key, value)| (key.to_string(), value.to_string())),
+        )
+    }
+}
+
+impl From<Cookie> for (HeaderName, HeaderValue) {
+    fn from(cookie: Cookie) -> Self {
+        (
+            header::COOKIE,
+            HeaderValue::from_str(&cookie.to_string()).unwrap(),
         )
     }
 }
