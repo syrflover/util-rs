@@ -111,6 +111,10 @@ impl SetCookie {
         Default::default()
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.inner.is_empty()
+    }
+
     pub fn from_headers(headers: &HeaderMap) -> Self {
         headers
             .iter()
