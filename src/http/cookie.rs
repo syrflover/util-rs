@@ -72,3 +72,20 @@ impl Display for Cookie {
         write!(f, "{}", r)
     }
 }
+
+impl FromIterator<(String, String)> for Cookie {
+    fn from_iter<T: IntoIterator<Item = (String, String)>>(iter: T) -> Self {
+        Self {
+            inner: HashMap::from_iter(iter),
+        }
+    }
+}
+
+impl<'a> FromIterator<(&'a str, &'a str)> for Cookie {
+    fn from_iter<T: IntoIterator<Item = (&'a str, &'a str)>>(iter: T) -> Self {
+        Self::from_iter(
+            iter.into_iter()
+                .map(|(key, value)| (key.to_string(), value.to_string())),
+        )
+    }
+}
