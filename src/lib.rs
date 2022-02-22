@@ -1,11 +1,13 @@
 pub mod r#async;
+pub mod body_parser;
 mod from_request;
 pub mod http;
 mod read_chunks;
 pub mod sea_orm;
 pub mod validate;
 
-pub use from_request::{FromRequest, IntoPayload};
+pub use body_parser::BodyParser;
+pub use from_request::{FromRequest, ToPayload};
 pub use read_chunks::ReadChunks;
 
 #[macro_export]
