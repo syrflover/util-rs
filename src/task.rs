@@ -166,14 +166,28 @@ mod tests {
             }
         }
 
-        let cnt = Arc::new(Mutex::new(0));
-        let tasks = (0..15).map(|x| error(x, Duration::from_millis((x as u64) * 10), cnt.clone()));
+        let a_cnt = Arc::new(Mutex::new(0));
+        let b_cnt = Arc::new(Mutex::new(0));
+        let mut rng = thread_rng();
+        let sorted_tasks =
+            (0..15).map(|x| error(x, Duration::from_millis((x as u64) * 10), a_cnt.clone()));
+        let rand_tasks = (0..15).map(|x| {
+            error(
+                x,
+                Duration::from_millis(rng.gen_range(0..50)),
+                b_cnt.clone(),
+            )
+        });
 
-        let r = result_task(tasks, 5).await;
+        let a = result_task(sorted_tasks, 5).await;
+        let b = result_task(rand_tasks, 5).await;
 
-        let cnt = Arc::try_unwrap(cnt).unwrap().into_inner().unwrap();
+        let a_cnt = Arc::try_unwrap(a_cnt).unwrap().into_inner().unwrap();
+        let b_cnt = Arc::try_unwrap(b_cnt).unwrap().into_inner().unwrap();
 
-        assert_eq!(r, Err(()));
-        assert_eq!(cnt, 11);
+        assert_eq!(a, Err(()));
+        assert_eq!(a_cnt, 11);
+        assert_eq!(b, Err(()));
+        assert!(b_cnt <= 14);
     }
 }
