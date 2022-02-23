@@ -147,7 +147,7 @@ mod tests {
 
         let r = task(tasks, 5).await;
 
-        assert_eq!(r, Vec::<i32>::new());
+        assert!(r.is_empty());
     }
 
     #[tokio::test]
