@@ -4,11 +4,13 @@ mod from_request;
 pub mod http;
 mod read_chunks;
 pub mod sea_orm;
+mod task;
 pub mod validate;
 
 pub use body_parser::BodyParser;
 pub use from_request::{FromRequest, ToPayload};
 pub use read_chunks::ReadChunks;
+pub use task::*;
 
 #[macro_export]
 macro_rules! tri {
