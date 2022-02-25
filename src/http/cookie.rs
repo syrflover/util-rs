@@ -42,6 +42,10 @@ impl Cookie {
         self.inner.get(key).map(|st| st as &str)
     }
 
+    pub fn get2(&self, key1: &str, key2: &str) -> Option<(&str, &str)> {
+        self.get(key1).and_then(|x| Some((x, self.get(key2)?)))
+    }
+
     pub fn take(&mut self, key: &str) -> Option<String> {
         self.inner.remove(key)
     }
