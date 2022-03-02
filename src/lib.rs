@@ -2,6 +2,7 @@ pub mod r#async;
 pub mod body_parser;
 mod from_request;
 pub mod http;
+mod map_into;
 mod read_chunks;
 pub mod sea_orm;
 mod task;
@@ -9,6 +10,7 @@ pub mod validate;
 
 pub use body_parser::BodyParser;
 pub use from_request::{FromRequest, ToPayload};
+pub use map_into::*;
 pub use read_chunks::ReadChunks;
 pub use task::*;
 
