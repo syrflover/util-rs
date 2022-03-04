@@ -32,36 +32,35 @@ where
         T::from_request(param, self).await
     }
 }
-/*
+
 #[async_trait::async_trait]
-pub trait FromRefRequest: Sized {
+pub trait FromOwnedRequest: Sized {
     type Parameter: Send;
     type Error;
 
-    async fn from_ref_request(
+    async fn from_owned_request(
         param: Self::Parameter,
-        request: &mut Request<Body>,
+        request: Request<Body>,
     ) -> Result<Self, Self::Error>;
 }
 
 #[async_trait::async_trait]
-pub trait ToPayload<T> {
+pub trait IntoPayload<T> {
     type Parameter: Send;
     type Error;
 
-    async fn to_payload(&mut self, param: Self::Parameter) -> Result<T, Self::Error>;
+    async fn into_payload(self, param: Self::Parameter) -> Result<T, Self::Error>;
 }
 
 #[async_trait::async_trait]
-impl<T> ToPayload<T> for Request<Body>
+impl<T> IntoPayload<T> for Request<Body>
 where
-    T: FromRefRequest + 'static,
+    T: FromOwnedRequest + 'static,
 {
     type Parameter = T::Parameter;
     type Error = T::Error;
 
-    async fn to_payload(&mut self, param: Self::Parameter) -> Result<T, Self::Error> {
-        T::from_ref_request(param, self).await
+    async fn into_payload(self, param: Self::Parameter) -> Result<T, Self::Error> {
+        T::from_owned_request(param, self).await
     }
 }
- */
