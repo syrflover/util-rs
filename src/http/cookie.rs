@@ -6,7 +6,7 @@ use http::{
 };
 use itertools::Itertools;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Cookie {
     inner: HashMap<String, String>,
 }

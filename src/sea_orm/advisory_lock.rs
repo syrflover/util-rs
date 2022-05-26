@@ -3,14 +3,14 @@ use std::time::Duration;
 use futures::Future;
 use sea_orm::{ConnectionTrait, DatabaseConnection, Statement};
 
-pub async fn advisory_lock<'a, P, R, E>(
+/// Refs: https://www.postgresql.org/docs/14/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS
+pub async fn advisory_lock<'a, F, R, E>(
     unique_key: &str,
     conn: &'a DatabaseConnection,
-    f: fn(&'a DatabaseConnection) -> P,
+    f: fn(&'a DatabaseConnection) -> F,
 ) -> Result<bool, E>
 where
-    // F: Fn(&DatabaseConnection) -> P,
-    P: Future<Output = Result<R, E>>,
+    F: Future<Output = Result<R, E>>,
 {
     let unique_key = make_unique_key(unique_key);
 
