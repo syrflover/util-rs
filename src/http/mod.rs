@@ -1,5 +1,6 @@
 mod cookie;
 mod header;
+pub mod multipart;
 mod response;
 mod set_cookie;
 pub mod url;
