@@ -87,9 +87,9 @@ impl Iterator for Multipart {
 
         let mut headers = HeaderMap::new();
 
-        let boundary_pos = twoway::find_bytes(r, b"\r\n\r\n").unwrap();
+        let crlf_pos = twoway::find_bytes(r, b"\r\n\r\n").unwrap();
 
-        if let Ok(x) = String::from_utf8(r[..boundary_pos].to_vec()) {
+        if let Ok(x) = String::from_utf8(r[..crlf_pos].to_vec()) {
             let lines = x.trim().lines();
             for x in lines {
                 let mut it = x.splitn(2, ':');
@@ -114,12 +114,12 @@ impl Iterator for Multipart {
         }
 
         // boundary_pos + length of "\r\n\r\n"
-        let body = &r[(boundary_pos + 4)..];
+        let body = r[(crlf_pos + 4)..].to_vec();
 
         // println!("headers = {}", String::from_utf8(headers.to_vec()).unwrap());
         // println!("body = {}", String::from_utf8(body.to_vec()).unwrap());
 
-        Some((headers, body.to_vec()))
+        Some((headers, body))
     }
 }
 
