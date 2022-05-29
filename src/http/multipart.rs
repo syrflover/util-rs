@@ -113,7 +113,7 @@ impl Iterator for Multipart {
             }
         }
 
-        // boundary_pos + length of "\r\n\r\n"
+        // crlf_pos + length of "\r\n\r\n"
         let body = r[(crlf_pos + 4)..].to_vec();
 
         // println!("headers = {}", String::from_utf8(headers.to_vec()).unwrap());
