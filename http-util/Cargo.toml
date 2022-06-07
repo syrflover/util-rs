@@ -1,5 +1,5 @@
 [package]
-name = "cookie"
+name = "http-util"
 version = "0.1.0"
 edition = "2021"
 
