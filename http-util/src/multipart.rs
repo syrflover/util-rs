@@ -123,12 +123,18 @@ impl Iterator for Multipart {
     }
 }
 
-#[tokio::test]
-async fn test_multipart() {
-    let boundary = "abhjdahkdhfsikldhjfliawefrkhkahskda";
+#[cfg(test)]
+mod tests {
+    use http::{header, Request};
 
-    let body = format!(
-        r#"--{boundary}
+    use super::Multipart;
+
+    #[tokio::test]
+    async fn test_multipart() {
+        let boundary = "abhjdahkdhfsikldhjfliawefrkhkahskda";
+
+        let body = format!(
+            r#"--{boundary}
 Content-Type: application/http
 Content-ID: response-
 
@@ -175,42 +181,43 @@ Vary: Referer
 }}
 
 --{boundary}--"#
-    )
-    .replace('\n', "\r\n")
-    .replace("adnsdkjasdh", "\r\r\r\r\r\r\r\r");
-
-    let mut request = Request::builder()
-        .header(
-            header::CONTENT_TYPE,
-            format!("multipart/form-data; boundary={boundary}"),
         )
-        .body(body.into())
-        .unwrap();
+        .replace('\n', "\r\n")
+        .replace("adnsdkjasdh", "\r\r\r\r\r\r\r\r");
 
-    let multipart = Multipart::new(&mut request).await.unwrap();
+        let mut request = Request::builder()
+            .header(
+                header::CONTENT_TYPE,
+                format!("multipart/form-data; boundary={boundary}"),
+            )
+            .body(body.into())
+            .unwrap();
 
-    // let a = String::from_utf8(multipart.next().unwrap()).unwrap();
+        let multipart = Multipart::new(&mut request).await.unwrap();
 
-    // println!("{a}");
+        // let a = String::from_utf8(multipart.next().unwrap()).unwrap();
 
-    for (headers, a) in multipart {
-        let content_type = headers.get("Content-Type").unwrap().to_str().unwrap();
-        let content_id = headers.get("Content-ID").unwrap().to_str().unwrap();
+        // println!("{a}");
 
-        println!("Content-Type: {content_type}");
-        println!("Content-ID: {content_id}");
-        println!();
+        for (headers, a) in multipart {
+            let content_type = headers.get("Content-Type").unwrap().to_str().unwrap();
+            let content_id = headers.get("Content-ID").unwrap().to_str().unwrap();
 
-        let a = String::from_utf8(a).unwrap();
+            println!("Content-Type: {content_type}");
+            println!("Content-ID: {content_id}");
+            println!();
 
-        let r = a.contains('\r');
+            let a = String::from_utf8(a).unwrap();
 
-        assert!(r);
+            let r = a.contains('\r');
 
-        println!("{a}");
+            assert!(r);
 
-        // println!("{}", a.replace('\r', "\\r"));
+            println!("{a}");
 
-        println!("------------------");
+            // println!("{}", a.replace('\r', "\\r"));
+
+            println!("------------------");
+        }
     }
 }
