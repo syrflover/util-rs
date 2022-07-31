@@ -1,3 +1,6 @@
-pub mod advisory_lock;
+mod advisory_lock;
 pub mod function;
-pub mod order_by;
+mod order_by;
+
+pub use advisory_lock::advisory_lock;
+pub use order_by::OrderByRandom;
