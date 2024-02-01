@@ -10,7 +10,7 @@ server = ["twoway", "hyper"]
 
 [dependencies]
 http = "0.2"
-itertools = "0.10"
+itertools = "0.12"
 thiserror = "1.0"
 twoway = { version = "0.2.2", optional = true }
 hyper = { version = "0.14", optional = true }
