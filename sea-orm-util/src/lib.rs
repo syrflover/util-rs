@@ -1,4 +1,5 @@
 mod advisory_lock;
+pub mod error;
 pub mod function;
 mod order_by;
 mod select;
