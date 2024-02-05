@@ -1,8 +1,11 @@
 use std::marker::PhantomData;
 
 use sea_orm::{
-    sea_query::{Alias, SelectStatement},
-    EntityTrait, Select,
+    sea_query::{
+        Alias, MysqlQueryBuilder, PostgresQueryBuilder, SelectStatement, SqliteQueryBuilder,
+    },
+    ConnectionTrait, DatabaseConnection, DbErr, EntityTrait, ExecResult, QueryResult, Select,
+    Statement,
 };
 
 pub trait FromSubquery {
@@ -30,5 +33,53 @@ where
             .from_subquery(subquery, Alias::new(entity.table_name()));
 
         unsafe { std::mem::transmute::<_, Select<E>>(r) }
+    }
+}
+
+#[async_trait::async_trait]
+pub trait Execute {
+    async fn query_all(&self, conn: &DatabaseConnection) -> Result<Vec<QueryResult>, DbErr>;
+
+    async fn query_one(&self, conn: &DatabaseConnection) -> Result<Option<QueryResult>, DbErr>;
+
+    async fn execute(&self, conn: &DatabaseConnection) -> Result<ExecResult, DbErr>;
+}
+
+#[async_trait::async_trait]
+impl Execute for SelectStatement {
+    async fn query_all(&self, conn: &DatabaseConnection) -> Result<Vec<QueryResult>, DbErr> {
+        let db_backend = conn.get_database_backend();
+        let (query, values) = match db_backend {
+            sea_orm::DatabaseBackend::MySql => self.build(MysqlQueryBuilder),
+            sea_orm::DatabaseBackend::Postgres => self.build(PostgresQueryBuilder),
+            sea_orm::DatabaseBackend::Sqlite => self.build(SqliteQueryBuilder),
+        };
+
+        conn.query_all(Statement::from_sql_and_values(db_backend, query, values))
+            .await
+    }
+
+    async fn query_one(&self, conn: &DatabaseConnection) -> Result<Option<QueryResult>, DbErr> {
+        let db_backend = conn.get_database_backend();
+        let (query, values) = match db_backend {
+            sea_orm::DatabaseBackend::MySql => self.build(MysqlQueryBuilder),
+            sea_orm::DatabaseBackend::Postgres => self.build(PostgresQueryBuilder),
+            sea_orm::DatabaseBackend::Sqlite => self.build(SqliteQueryBuilder),
+        };
+
+        conn.query_one(Statement::from_sql_and_values(db_backend, query, values))
+            .await
+    }
+
+    async fn execute(&self, conn: &DatabaseConnection) -> Result<ExecResult, DbErr> {
+        let db_backend = conn.get_database_backend();
+        let (query, values) = match db_backend {
+            sea_orm::DatabaseBackend::MySql => self.build(MysqlQueryBuilder),
+            sea_orm::DatabaseBackend::Postgres => self.build(PostgresQueryBuilder),
+            sea_orm::DatabaseBackend::Sqlite => self.build(SqliteQueryBuilder),
+        };
+
+        conn.execute(Statement::from_sql_and_values(db_backend, query, values))
+            .await
     }
 }

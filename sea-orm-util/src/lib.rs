@@ -6,4 +6,4 @@ mod select;
 
 pub use advisory_lock::advisory_lock;
 pub use order_by::OrderByRandom;
-pub use select::FromSubquery;
+pub use select::*;
