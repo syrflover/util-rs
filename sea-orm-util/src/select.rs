@@ -2,7 +2,8 @@ use std::marker::PhantomData;
 
 use sea_orm::{
     sea_query::{
-        Alias, MysqlQueryBuilder, PostgresQueryBuilder, SelectStatement, SqliteQueryBuilder,
+        Alias, IntoIden, MysqlQueryBuilder, PostgresQueryBuilder, SelectStatement,
+        SqliteQueryBuilder,
     },
     ConnectionTrait, DatabaseConnection, DbErr, EntityTrait, ExecResult, QueryResult, Select,
     Statement,
@@ -10,6 +11,8 @@ use sea_orm::{
 
 pub trait FromSubquery {
     fn from_subquery(self, subquery: SelectStatement) -> Self;
+
+    fn from_subquery_as<T: IntoIden>(self, subquery: SelectStatement, alias: T) -> Self;
 }
 
 struct _Select<E>
@@ -26,11 +29,13 @@ where
 {
     fn from_subquery(self, subquery: SelectStatement) -> Self {
         let entity = E::default();
+        self.from_subquery_as(subquery, Alias::new(entity.table_name()))
+    }
+
+    fn from_subquery_as<T: IntoIden>(self, subquery: SelectStatement, alias: T) -> Self {
         let mut r = unsafe { std::mem::transmute::<_, _Select<E>>(self) };
 
-        r.query
-            .from_clear()
-            .from_subquery(subquery, Alias::new(entity.table_name()));
+        r.query.from_clear().from_subquery(subquery, alias);
 
         unsafe { std::mem::transmute::<_, Select<E>>(r) }
     }
